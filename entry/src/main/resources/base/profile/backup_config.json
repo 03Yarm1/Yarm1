@@ -1,0 +1,20 @@
+{
+  "allowToBackupRestore": true,
+
+  "module": {
+    "reqPermissions": [
+      {
+        "name": "ohos.permission.INTERNET",
+        "reason": "For network access",
+        "usedScene": {
+          "ability": [
+            "com.example.myapplication.MainAbility"
+          ],
+          "when": "always"
+        }
+      }
+    ]
+  }
+
+}
+
