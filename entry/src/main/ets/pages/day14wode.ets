@@ -3,70 +3,75 @@ import { router } from '@kit.ArkUI'
 @Component
 struct day14wode {
 
+  @StorageLink('userName') name: string = '田老师'
+  @StorageLink('userPhone') phone: string = '13800138000'
+
   build() {
     Column(){
       Row(){
         Column(){
-          Image($r('app.media.jd_QQ'))
+          Image($r('app.media.avatar_boy'))
             .width(50)
             .height(50)
             .borderRadius(100)
-            .margin({left:20})
+            .margin({left:20,right:10})
         }
-        Column(){
-          Text('学校')
-          Text('sd')
+        Column({space:5}){
+          Text(this.name)
+          Text(this.phone)
         }
-        .margin({left:20})
+
       }
       Column(){
         Row(){
           Text('修改个人信息')
+
           Image($r('app.media.jd_right'))
 
             .onClick(()=>{
               router.pushUrl({
-                url: 'pages/changpeople'
+                url: 'pages/day21gerenxinxi'
               })
             })
             .width(20)
             .position({x:300})
         }
+        .margin({left:-40})
         .onClick(()=>{
           router.pushUrl({
-            url: 'pages/changpeople'
+            url: 'pages/day21gerenxinxi'
           })
         })
         Text('修改密码')
-          .position({y:40})
+          .position({x:-40,y:40})
           .onClick(()=>{
             router.pushUrl({
-              url: 'pages/change'
+              url: 'pages/day22xiugaimima'
             })
           })
         Image($r('app.media.jd_right'))
           .width(20)
-          .position({x:300,y:40})
+          .position({x:260,y:40})
           .onClick(()=>{
             router.pushUrl({
-              url: 'pages/change'
+              url: 'pages/day22xiugaimima'
             })
           })
 
         Text('退出登录')
-          .position({y:80})
+          .position({x:-40,y:80})
           .onClick(()=>{
             router.pushUrl({
-              url:'pages/Index'
+              url:'pages/day12'
             })
           })
         Image($r('app.media.jd_right'))
           .width(20)
-          .position({x:300,y:80})
+          .position({x:260,y:80})
 
           .onClick(()=>{
             router.pushUrl({
-              url:'pages/Index'
+              url:'pages/day12'
             })
           })
 
@@ -87,7 +92,7 @@ struct day14wode {
         })
         .margin({left:57,right:150})
         Column() {
-          Image($r('app.media.522'))
+          Image($r('app.media.552'))
             .margin({top:5})
             .width(30)
           Text('我的')

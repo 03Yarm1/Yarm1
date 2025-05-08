@@ -2,23 +2,32 @@ import { PrintExtensionAbility } from '@kit.BasicServicesKit';
 import router from '@ohos.router';
 import http from '@ohos.net.http';
 import { promptAction } from '@kit.ArkUI';
-import json from '@ohos.util.json';
 
 @Entry
 @Component
 struct Index {
   // 新增登录相关状态变量
-  @State userUsername: string = '18991274261';
-  @State userPassword: string = 'lwjy123456';
-
+  @State typeid: string = '';
+  @State userUsername: string = '';
+  @State userPassword: string = '';
 
   build() {
     Stack() {
       Row(){
-        Image($r("app.media.login_bg")) // 确保图片放在src/main/resources/base/media目录
-          .width('100%')
-          .height('30%')
-          .objectFit(ImageFit.Cover)
+        Stack() {
+          Image($r("app.media.login"))// 确保图片放在src/main/resources/base/media目录
+            .width('100%')
+            .height('30%')
+            .objectFit(ImageFit.Cover)
+          Row() {
+            Text('您好！')
+              .fontSize(40)
+            Text('欢迎使用！')
+              .fontSize(25)
+              .padding({top:5})
+          }
+          .padding({right:60})
+        }
       }
       .position({x:0,y:0})
 
@@ -66,25 +75,24 @@ struct Index {
           .backgroundColor(Color.Green)
           .onClick(async () => {
             // 接收 LoginCheck 返回值
-            const success = await LoginCheck(this.userUsername, this.userPassword);
+            const result = await LoginCheck(this.userUsername, this.userPassword);
 
-            // const k = jsonResponse.result.userInfo.clientType
-
-            if (success) {
+            if (result[0]) {
               // 登录成功逻辑，如跳转页面或提示
               promptAction.showToast({
                 message: '登录成功',
                 duration: 2000,
                 bottom:670
               })
-
-              if ( === '3') {
-                router.pushUrl({ url: 'pages/day13index' });
-              } else if (k === '2') {
+              if (result[1]=="2") {
+                console.log("登录成功，用户类型为："+result[1]);
+                router.pushUrl({ url: 'pages/day13index' }); // 示例：跳转到主页
+              }else if(result[1]=="3"){
+                console.log("登录成功，用户类型为："+result[1]);
                 router.pushUrl({ url: 'pages/day14wode' });
               }
 
-              router.pushUrl({ url: 'pages/day13index' }); // 示例：跳转到主页
+
             } else {
               // 登录失败逻辑，提示用户
               promptAction.showToast({
@@ -108,8 +116,8 @@ struct Index {
       .margin({ top: 500})
     }.backgroundColor(Color.Gray)
   }
-}0
-async function LoginCheck(username: string, password: string): Promise<string> {
+}
+async function LoginCheck(username: string, password: string): Promise<[boolean,string]> {
   let httpRequest = http.createHttp();
 
   interface UserInfo {
@@ -172,67 +180,39 @@ async function LoginCheck(username: string, password: string): Promise<string> {
     password: string;
   }
 
-  const url = 'https://api.suoeryun.com/ifood/jeecg-system/sys/login';
-  const data: Data = { username, password };
+  let url = 'https://api.suoeryun.com/ifood/jeecg-system/sys/login';
+  let data: Data = {
+    username: username,
+    password: password
+  };
 
   try {
-    const response = await httpRequest.request(url, {
-      method: http.RequestMethod.POST,
-      header: { 'Content-Type': 'application/json' },
-      extraData: JSON.stringify(data)
-    });
+    let response = await httpRequest.request(
+      url,
+      {
+        method: http.RequestMethod.POST,
+        header: { 'Content-Type': 'application/json' },
+        extraData: JSON.stringify(data)
+      }
+    );
 
+    // 确保请求成功（HTTP 状态码为200）
     if (response.responseCode === 200) {
       const jsonResponse = JSON.parse(response.result as string) as LoginResponse;
-
-      if (jsonResponse.code === 200 && jsonResponse.result?.userInfo?.clientType) {
-        return jsonResponse.result.userInfo.clientType
-        ;
-      } else {
-        promptAction.showToast({ message: '未获取到 clientType' });
-        return { success: false };
+      if (jsonResponse.code === 200) {
+        return [true,jsonResponse.result.userInfo.clientType];
       }
-    } else {
+      return [false,"-1"];
+
+    }else {
       console.log('请求失败，状态码:', response.responseCode);
-      return { success: false };
+      return [false,"-1"];
+
     }
   } catch (error) {
     console.error('请求异常:', error);
-    return { success: false };
+    return [false,"-1"];
+    //return '0';
   }
-}
-
-
-  // let url = 'https://api.suoeryun.com/ifood/jeecg-system/sys/login';
-  // let data: Data = {
-  //   username: username,
-  //   password: password
-  // };
-
-  // try {
-  //   let response = await httpRequest.request(
-  //     url,
-  //     {
-  //       method: http.RequestMethod.POST,
-  //       header: { 'Content-Type': 'application/json' },
-  //       extraData: JSON.stringify(data)
-  //     }
-  //   );
-  //
-  //   // 确保请求成功（HTTP 状态码为200）
-  //   if (response.responseCode === 200) {
-  //     const jsonResponse = JSON.parse(response.result as string) as LoginResponse;
-  //
-  //     // 将结果解析为JSON对象
-  //     console.log(jsonResponse.result.userInfo.clientType)
-  //     return jsonResponse.code === 200; // 返回code值
-  //   } else {
-  //     console.log('请求失败，状态码:', response.responseCode);
-  //     return false;
-  //   }
-  // } catch (error) {
-  //   console.error('请求异常:', error);
-  //   return false;
-  // }
 }
 
