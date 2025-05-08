@@ -1,0 +1,12 @@
+{
+  "src": [
+    "pages/Index",
+    "pages/peisong",
+    "pages/Page",
+    "pages/change",
+    "pages/changpeople",
+    "pages/wode",
+    "pages/Report",
+    "pages/piliangsetting"
+  ]
+}
